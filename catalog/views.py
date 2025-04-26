@@ -4,7 +4,9 @@ from django.http import HttpResponse
 
 
 def home(request):
-    return render(request, 'catalog/home.html')
+    latest_products = Product.objects.order_by('-created_at')[:5]
+    print("Последние продукты:", latest_products)
+    return render(request, 'catalog/home.html', {'products': latest_products})
 
 
 def contacts(request):
