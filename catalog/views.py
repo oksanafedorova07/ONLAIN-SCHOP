@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from .models import Product, Category  # Импорт всех необходимых моделей
 
 
 def home(request):
     latest_products = Product.objects.order_by("-created_at")[:5]
-    print("Последние продукты:", latest_products)
-    return render(request, "catalog/home.html", {"products": latest_products})
+    categories = Category.objects.all()
+    context = {"products": latest_products, "categories": categories}
+    return render(request, "catalog/home.html", context)
 
 
 def contacts(request):
