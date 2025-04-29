@@ -1,22 +1,26 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-
+from .models import Product, Category  # Импорт всех необходимых моделей
 
 
 def home(request):
-    return render(request, 'catalog/home.html')
+    latest_products = Product.objects.order_by("-created_at")[:5]
+    categories = Category.objects.all()
+    context = {"products": latest_products, "categories": categories}
+    return render(request, "catalog/home.html", context)
 
 
-def contact(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        message = request.POST.get('message')
+def contacts(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        phone = request.POST.get("phone")
+        message = request.POST.get("message")
 
         if name and phone and message:
             print(f"Новое сообщение от {name} ({phone}): {message}")
-            return render(request, 'catalog/contacts.html', {'success': True})
+            return render(request, "catalog/contacts.html", {"success": True})
         else:
-            return render(request, 'catalog/contacts.html', {'error': 'Заполните все поля'})
+            return render(
+                request, "catalog/contacts.html", {"error": "Заполните все поля"}
+            )
 
-    return render(request, 'catalog/contacts.html')
+    return render(request, "catalog/contacts.html")
