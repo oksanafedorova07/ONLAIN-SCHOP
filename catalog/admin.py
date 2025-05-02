@@ -15,17 +15,17 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "category", "created_at")
+    list_display = ("id", "name", "price", "category", "created_at")  # Добавлено "id"
+    list_display_links = ("id", "name")  # Делаем ID и название кликабельными
     list_filter = ("category", "created_at")
     search_fields = ("name", "description")
     date_hierarchy = "created_at"
     readonly_fields = ("created_at", "updated_at")
     fieldsets = (
         (None, {"fields": ("name", "category")}),
-        ("Детали", {"fields": ("description", "image", "price")}),
+        ("Детали", {"fields": ("description", "photo", "price")}),
         ("Даты", {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
     )
-
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
