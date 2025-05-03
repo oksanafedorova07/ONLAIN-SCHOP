@@ -1,13 +1,17 @@
-from django.shortcuts import render
-from .models import Product, Category  # Импорт всех необходимых моделей
+from django.shortcuts import render, get_object_or_404
+from .models import Product, Contact, Category
 
 
-def home(request):
-    latest_products = Product.objects.order_by("-created_at")[:5]
-    categories = Category.objects.all()
-    context = {"products": latest_products, "categories": categories}
-    return render(request, "catalog/home.html", context)
 
+def product_list(request):
+    products = Product.objects.all()
+    context = {"products": products}
+    return render(request, 'catalog/product_list.html', context)
+
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    context = {"product": product}
+    return render(request, 'catalog/product_detail.html', context)
 
 def contacts(request):
     if request.method == "POST":
