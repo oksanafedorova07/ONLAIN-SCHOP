@@ -3,14 +3,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-from .views import product_detail, contacts, product_list
+from .views import ProductDetailView, ContactView, ProductListView
 
 app_name = "catalog"
 
 urlpatterns = [
-     path("product/", product_list, name="product_list"),
-     path("contacts/", contacts, name="contacts"),
-     path('product/<int:pk>/', product_detail, name="product_detail"),
+     path("product/", ProductListView.as_view(), name="product_list"),
+     path("contacts/", ContactView.as_view(), name="contacts"),
+     path('product/<int:pk>/', ProductDetailView.as_view(), name="product_detail"),
 ]
 
 if settings.DEBUG:
