@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "catalog",
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'blog.apps.BlogConfig'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +141,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Для корректного отображения кириллицы в фикстурах
 DEFAULT_CHARSET = "utf-8"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

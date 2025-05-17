@@ -1,0 +1,16 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>{{ post.content }}</p>
+
+{% if post.preview %}
+  <img src="{{ post.preview.url }}" alt="Preview" width="300">
+{% endif %}
+
+<p><strong>Опубликовано:</strong> {{ post.is_published }}</p>
+<p><strong>Просмотров:</strong> {{ post.views_count }}</p>
+
+<a href="{% url 'blog:post_update' post.pk %}">Редактировать</a> |
+<a href="{% url 'blog:post_delete' post.pk %}">Удалить</a> |
+<a href="{% url 'blog:post_list' %}">Назад</a>
+{% endblock %}

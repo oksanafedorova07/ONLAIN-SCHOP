@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Category, Product, Contact
+from django.utils.safestring import mark_safe
+
+from catalog.models import Category, Product, Contact
 
 
 @admin.register(Category)
@@ -30,3 +32,6 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'phone', 'created_at')
+
+
+
