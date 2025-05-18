@@ -13,7 +13,8 @@
               <p class="card-text">{{ object.price }}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                 <a class="btn btn-primary" href="{% url 'catalog:product_detail' product.pk %}" role="button">Характеристики</a>
+                 <a class="btn btn-primary" href="{% url 'catalog:product_list' %}" role="button">Назад</a>
+                 <a class="btn btn-primary" href="{% url 'catalog:product_confirm_delete' product.pk %}" role="button">Удалить</a>
                 </div>
               </div>
             </div>

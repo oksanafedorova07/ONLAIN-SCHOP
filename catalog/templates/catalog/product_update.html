@@ -1,0 +1,44 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1 class="mb-4">{% if object %}Изменить{% else %}Создать{% endif %} товар</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label class="form-label">Категория</label>
+        {{ form.category }}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Название</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+            <div class="text-danger">{{ form.name.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Описание</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+            <div class="text-danger">{{ form.description.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Цена</label>
+        {{ form.price }}
+        {% if form.price.errors %}
+            <div class="text-danger">{{ form.price.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Изображение</label>
+        {{ form.photo }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{% url 'catalog:product_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

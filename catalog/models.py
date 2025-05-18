@@ -1,5 +1,11 @@
 from django.db import models
 
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+import os
+from django.conf import settings
+
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
@@ -32,6 +38,8 @@ class Product(models.Model):
         indexes = [
             models.Index(fields=["name", "category"]),
         ]
+
+
 
     def __str__(self):
         return f"{self.name} ({self.price} руб.)"
