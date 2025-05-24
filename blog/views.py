@@ -1,9 +1,9 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+import django.views.generic
 from django.urls import reverse_lazy, reverse
 from .models import Post
 
 
-class PostListView(ListView):
+class PostListView(django.views.generic.ListView):
     model = Post
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
@@ -12,7 +12,7 @@ class PostListView(ListView):
         return Post.objects.filter(is_published=True).order_by('-created_at')
 
 
-class PostDetailView(DetailView):
+class PostDetailView(django.views.generic.DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
     context_object_name = 'post'
@@ -24,7 +24,7 @@ class PostDetailView(DetailView):
         return obj
 
 
-class PostCreateView(CreateView):
+class PostCreateView(django.views.generic.CreateView):
     model = Post
     template_name = 'blog/post_form.html'
     fields = ['title', 'content', 'preview', 'is_published']
@@ -33,7 +33,7 @@ class PostCreateView(CreateView):
         return reverse('blog:post_detail', kwargs={'pk': self.object.pk})
 
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(django.views.generic.UpdateView):
     model = Post
     template_name = 'blog/post_form.html'
     fields = ['title', 'content', 'preview', 'is_published']
@@ -42,7 +42,7 @@ class PostUpdateView(UpdateView):
         return reverse('blog:post_detail', kwargs={'pk': self.object.pk})
 
 
-class PostDeleteView(DeleteView):
+class PostDeleteView(django.views.generic.DeleteView):
     model = Post
     template_name = 'blog/post_confirm_delete.html'
     success_url = reverse_lazy('blog:post_list')
