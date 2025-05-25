@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
+
 from catalog.models import Category, Product, Contact
 
 

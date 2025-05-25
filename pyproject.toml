@@ -8,6 +8,14 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.13"
 faker = "^37.1.0"
+wcwidth = "==0.2.13"
+django-crispy-forms = "==2.4"
+dotenv = "^0.9.9"
+yandex = "^0.0.2"
+pathlib = "^1.0.1"
+see = "^1.4.1"
+howto = "^0.2.2"
+django = "4.2.2"
 
 
 [tool.poetry.group.lint.dependencies]
