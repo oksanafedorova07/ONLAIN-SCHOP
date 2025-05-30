@@ -14,11 +14,19 @@
 
 Мы не просто показываем карту — мы рисуем портрет страны, где Европа и Азия сплетаются в один узор. Потому что Россия — это не только «две столицы». Это миллион дорог, каждая из которых ведёт к открытию.</p>
 
-  <a href="{% url 'blog:post_create' %}">Создать новую запись</a>
+{% if user.is_authenticated %}
+    {% with groups=user.groups.all %}
+        {% for group in groups %}
+            {% if group.name == 'Контент-менеджер' %}
+                <a href="{% url 'blog:post_create' %}">Создать новую запись</a>
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+{% endif %}
 <ul>
   {% for post in posts %}
     <li>
-      <a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a>
+      <a href="{% url 'blog:post_update' post.pk %}">{{ post.title }}</a>
       {% if post.is_published %} ✅ {% else %} ❌ {% endif %}
     </li>
   {% empty %}

@@ -3,7 +3,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-from .views import ProductDetailView, ContactView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView
+from .views import ProductDetailView, ContactView, ProductListView, ProductCreateView, ProductUpdateView, \
+     ProductDeleteView, PublishProduct
 
 app_name = "catalog"
 
@@ -14,6 +15,8 @@ urlpatterns = [
      path("contacts/", ContactView.as_view(), name="contacts"),
      path('product/<int:pk>/', ProductDetailView.as_view(), name="product_detail"),
      path('<int:pk>/delete/', ProductDeleteView.as_view(), name="product_confirm_delete"),
+     path('product/<int:product_id>/unpublish/', PublishProduct.as_view(), name='publish_product'),
+     path('product/<int:pk>/toggle-publish/', PublishProduct.as_view(), name='toggle_publish'),
 ]
 
 if settings.DEBUG:

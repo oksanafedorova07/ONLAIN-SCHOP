@@ -29,6 +29,13 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    is_published = models.BooleanField(default=False, verbose_name="Опубликовано")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True  # Временное решение для миграции
+    )
 
     class Meta:
         verbose_name = "Товар"
@@ -37,7 +44,14 @@ class Product(models.Model):
         indexes = [
             models.Index(fields=["name", "category"]),
         ]
+        permissions = [
+            ("can_unpublish_product", "can unpublish product"),
+            ("can_delete_product", "Can delete any product"),
+        ]
 
+    @property
+    def publish_status(self):
+        return "Опубликован" if self.is_published else "Не опубликован"
 
 
     def __str__(self):

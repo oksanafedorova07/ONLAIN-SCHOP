@@ -1,9 +1,11 @@
 import os
 from django import forms
 from django.core.exceptions import ValidationError
-
+from django.urls import reverse
 
 from .models import Product
+
+
 
 
 class ProductForm(forms.ModelForm):
@@ -81,6 +83,9 @@ class ProductForm(forms.ModelForm):
                 field.widget.attrs['placeholder'] = 'Опишите характеристики товара'
             elif field_name == 'price':
                 field.widget.attrs['placeholder'] = 'Цена в рублях'
+
+    def get_absolute_url(self):
+        return reverse('catalog:product_detail', kwargs={'pk': self.pk})
 
         # Специальные настройки для отдельных полей
         self.fields['description'].widget.attrs.update({
