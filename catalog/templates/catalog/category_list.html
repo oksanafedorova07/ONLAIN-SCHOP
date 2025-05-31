@@ -1,0 +1,9 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+{% for category in categories %}
+    <a href="{% url 'catalog:category_products' category.slug %}">
+        {{ category.name }}
+    </a>
+{% endfor %}
+{% endblock %}

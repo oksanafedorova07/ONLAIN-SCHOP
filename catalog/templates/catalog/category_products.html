@@ -1,0 +1,23 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+
+<h1>Продукты в категории "{{ category.name }}"</h1>
+{% if products %}
+    <ul>
+    {% for product in products %}
+        <li>
+            <a href="{% url 'catalog:product_detail' pk=product.pk %}">
+                {{ product.name }}
+            </a>
+            - {{ product.price }} руб.
+            <br>
+            <small>Статус: {{ product.publish_status }}</small>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет продуктов в этой категории.</p>
+{% endif %}
+{% endblock %}
+

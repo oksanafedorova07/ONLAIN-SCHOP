@@ -3,12 +3,14 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 import os
 from django.conf import settings
-
+from django.template.defaultfilters import slugify
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название")
-    description = models.TextField(verbose_name="Описание")
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(null=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True, verbose_name='Активна')
 
     class Meta:
         verbose_name = "Категория"
@@ -18,14 +20,17 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
     description = models.TextField(verbose_name="Описание")
     photo = models.ImageField(upload_to='photos/', verbose_name='Изображение')
-    category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, verbose_name="Категория"
-    )
+    category=models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")

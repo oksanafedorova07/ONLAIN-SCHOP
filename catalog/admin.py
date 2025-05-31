@@ -7,8 +7,9 @@ from catalog.models import Category, Product, Contact
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "description_short")
-    search_fields = ("name", "description")
+    list_display = ('name', 'slug', 'is_active')
+    list_editable = ('is_active',)
+    prepopulated_fields = {'slug': ('name',)}
 
     def description_short(self, obj):
         return f"{obj.description[:50]}..." if obj.description else ""

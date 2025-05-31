@@ -16,6 +16,9 @@ pathlib = "^1.0.1"
 see = "^1.4.1"
 howto = "^0.2.2"
 django = "4.2.2"
+redis = "==6.2.0"
+django-redis = "==5.4.0"
+path = "^17.1.0"
 
 
 [tool.poetry.group.lint.dependencies]
