@@ -13,7 +13,7 @@ from .forms import ProductForm
 from .services import get_product_from_cache, get_products_by_category
 
 
-@method_decorator(cache_page(60 * 15), name='dispatch')
+
 class ProductDetailView(DetailView):
     model = Product
     context_object_name = 'product'
@@ -28,22 +28,6 @@ class CategoryListView(ListView):
     def get_queryset(self):
 
      return Category.objects.all()
-
-
-def get_category_products(category_slug):
-    """Возвращает продукты указанной категории с кешированием"""
-    cache_key = f'category_products_{category_slug}'
-    products = cache.get(cache_key)
-
-    if products is None:
-        # Если нет в кеше - получаем из БД
-        category = get_object_or_404(Category, slug=category_slug)
-        products = Product.objects.filter(
-            category=category,
-            is_published=True
-        ).select_related('owner', 'category')
-        cache.set(cache_key, products, 60 * 60 * 2)  # Кешируем на 2 часа
-    return products
 
 
 class CategoryProductsView(ListView):
