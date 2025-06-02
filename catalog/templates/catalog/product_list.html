@@ -4,7 +4,7 @@
 <div class="album py-5 bg-body-tertiary">
     <div class="container">
       <div class="row row-cols-2 row-cols-sm-5 row-cols-md-3 g-3">
-        {% for product in object_list %}
+        {% for product in products %}
         <div class="col">
           <div class="card shadow-sm">
            <img src="{{ product.photo|media_filter }}">

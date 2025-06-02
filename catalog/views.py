@@ -1,43 +1,66 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, View, CreateView, UpdateView, DeleteView
-import os
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.core.cache import cache
+from django.db.models import Q
 
-from .models import Product, Contact
+from .models import Product, Contact, Category
 from .forms import ProductForm
-
-
-
-
-
-class PublishProduct(LoginRequiredMixin, PermissionRequiredMixin, View):
-    permission_required = 'catalog.can_unpublish_product'
-    raise_exception = True  # Показывать 403 вместо перенаправления на логин
-
-    def post(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        product.is_published = not product.is_published  # Инвертируем статус
-        product.save()
-        return redirect('catalog:product_detail', pk=product.pk)
-
-
-
-class ProductListView(ListView):
-    model = Product
+from .services import get_product_from_cache, get_products_by_category
 
 
 
 class ProductDetailView(DetailView):
     model = Product
+    context_object_name = 'product'
+
+
+class CategoryListView(ListView):
+    """Список всех категорий"""
+    model = Category
+    template_name = 'catalog/category_list.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+
+     return Category.objects.all()
+
+
+class CategoryProductsView(ListView):
+    template_name = 'catalog/category_products.html'
+    context_object_name = 'products'
+    paginate_by = 10
+
+    def get_queryset(self):
+        category_slug = self.kwargs.get('category_slug')
+        only_published = not self.request.user.is_staff  # Для админов показываем все
+        return get_products_by_category(category_slug, only_published)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_slug = self.kwargs.get('category_slug')
+        context['category'] = get_object_or_404(Category, slug=category_slug)
+        return context
+
+
+class ProductListView(ListView):
+    model = Product
+    template_name = 'catalog/product_list.html'
+    context_object_name = 'products'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return get_product_from_cache()
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
+    template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('catalog:product_list')
 
     def form_valid(self, form):
@@ -48,7 +71,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
-    template_name = "catalog/product_update.html"
+    template_name = "catalog/product_form.html"
     success_url = reverse_lazy('catalog:product_list')
 
     def dispatch(self, request, *args, **kwargs):
@@ -60,24 +83,37 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Product
+    template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:product_list')
 
     def test_func(self):
         product = self.get_object()
         return (
-            product.owner == self.request.user or
-            self.request.user.has_perm('catalog.can_delete_product')
+                product.owner == self.request.user or
+                self.request.user.has_perm('catalog.can_delete_product')
         )
 
     def handle_no_permission(self):
         raise PermissionDenied("У вас нет прав для удаления этого продукта")
 
-    def custom_permission_denied(request, exception=None):
-        return HttpResponseForbidden(render(request, '403.html'))
+
+class PublishProduct(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Изменение статуса публикации товара"""
+    permission_required = 'catalog.can_publish_product'
+    raise_exception = True
+
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        product.is_published = not product.is_published
+        product.save()
+
+        # Инвалидация кеша при изменении статуса публикации
+        cache.delete(f'category_products_{product.category.slug}')
+        return redirect('catalog:product_detail', pk=product.pk)
 
 
 class ContactView(View):
-    model = Contact
+    """Страница контактов"""
     template_name = 'catalog/contacts.html'
 
     def get(self, request, *args, **kwargs):
